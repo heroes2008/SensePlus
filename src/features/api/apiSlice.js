@@ -12,10 +12,10 @@ export const apiSlice = createApi({
     },
   }),
   endpoints: (builder) => ({
-    devices: builder.query({
-      query: () => "/devices",
+    positions: builder.query({
+      query: () => "/positions",
     }),
   }),
 });
 
-export const { useDevicesQuery } = apiSlice;
+export const { usePositionsQuery } = apiSlice;
