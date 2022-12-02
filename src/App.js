@@ -3,13 +3,16 @@ import logo from "./logo.svg";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Counter } from "./features/counter/Counter";
 import "./App.css";
-import { usePositionsQuery } from "./features/api/apiSlice";
+import {
+  usePositionsQuery,
+  usePositionsAndDevicesQuery,
+} from "./features/api/apiSlice";
 import { Container, Row, Col } from "react-bootstrap";
 import { DeviceCard } from "./components/DeviceCard";
 
 function App() {
   const { data, isSuccess, isLoading, isFetching, isError, error } =
-    usePositionsQuery();
+    usePositionsAndDevicesQuery();
   return (
     //<div className="App">
     <>

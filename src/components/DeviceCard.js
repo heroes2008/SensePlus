@@ -7,7 +7,9 @@ import { Row, Col } from "react-bootstrap";
 export function DeviceCard({ device }) {
   return (
     <Card className="h-100 shadow bg-white rounded m-2 p-2">
-      <Card.Header className="fs-3 fw-semibold">{device.deviceId}</Card.Header>
+      <Card.Header className="fs-3 fw-semibold text-nowrap">
+        {device.name}
+      </Card.Header>
       <Row>
         <Col xs={6}>
           <Row>
@@ -20,9 +22,7 @@ export function DeviceCard({ device }) {
           </Row>
           <Row>
             <div className="m-2 font-weight-bold text-center text-nowrap fs-4 fw-bold">
-              {device.attributes.temp1
-                ? device.attributes.temp1
-                : "-"}
+              {device.temp ? Number(device.temp).toFixed(2) : "-"}
             </div>
           </Row>
         </Col>
@@ -37,7 +37,7 @@ export function DeviceCard({ device }) {
           </Row>
           <Row>
             <div className="m-2 font-weight-bold text-center text-nowrap fs-4 fw-bold">
-              65.3%
+              {device.humidity ? Number(device.humidity / 100).toFixed(2) : "-"}%
             </div>
           </Row>
         </Col>
