@@ -18,17 +18,17 @@ const intervalOptions = [
   { label: "1m", value: 60000 },
 ];
 export const RefreshReadings = ({ refetch, isFetching }) => {
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  //   const initialPollingInterval = useSelector((state) =>
-  //     selectPollingInterval(state)
-  //   );
-  const [pollingInterval, setPollingInterval] = useState(5000);
+  const initialPollingInterval = useSelector((state) =>
+    selectPollingInterval(state)
+  );
+  //const [pollingInterval, setPollingInterval] = useState(5000);
 
   const onPollingIntervalChange = (e) => {
-    //dispatch(updatePollingInterval(Number(e.target.value)));
     console.log("interval changed to:" + Number(e.target.value));
-    setPollingInterval(Number(e.target.value));
+    dispatch(updatePollingInterval(Number(e.target.value)));
+    //setPollingInterval(Number(e.target.value));
   };
 
   //   const { data, isSuccess, isLoading, isFetching, isError, error } =
@@ -42,7 +42,7 @@ export const RefreshReadings = ({ refetch, isFetching }) => {
         </Form.Label>
         <Col sm={2}>
           <Form.Select
-            value={pollingInterval}
+            value={initialPollingInterval}
             onChange={onPollingIntervalChange}
           >
             {intervalOptions.map(({ label, value }) => (
@@ -59,7 +59,7 @@ export const RefreshReadings = ({ refetch, isFetching }) => {
             onClick={refetch}
             disabled={isFetching}
           >
-            {isFetching ? "Loading" : "Manually Refresh"}
+            {isFetching ? "Loading..." : "Manually Refresh"}
           </Form.Control>
         </Col>
       </Form.Group>

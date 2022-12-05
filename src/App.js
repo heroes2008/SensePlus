@@ -12,18 +12,31 @@ import { DeviceCard } from "./components/DeviceCard";
 import { RefreshReadings } from "./components/RefreshReadings";
 import { useSelector } from "react-redux";
 import { selectPollingInterval } from "./features/devices/devicesSlice";
+import { useDispatch } from "react-redux";
+import {
+  devicesLoading,
+  devicesReceived,
+  updatePollingInterval,
+} from "./features/devices/devicesSlice";
 
 function App() {
-  //const pollingInterval = useSelector((state) => selectPollingInterval(state));
+  const dispatch = useDispatch();
+  const pollingInterval = useSelector((state) => selectPollingInterval(state));
 
-  //console.log("pollingInterval:" + pollingInterval);
+  console.log("App.js->pollingInterval:" + pollingInterval);
   //console.log(state);
 
   const { data, isSuccess, isLoading, isFetching, refetch, isError, error } =
-    usePositionsAndDevicesQuery({ pollingInterval: 5000 });
+    usePositionsAndDevicesQuery("test", { pollingInterval });
+
+  // const { data, isSuccess, isLoading, isFetching, refetch, isError, error } =
+  //   usePositionsQuery("test", { pollingInterval: 5000 });
+
+  // if (data) {
+  //   dispatch(devicesReceived(data));
+  // }
 
   return (
-    //<div className="App">
     <>
       <h1 className="m-5 text-center">SensePlus Devices List</h1>
       {isLoading && <h2 className="m-5 text-center">...Loading</h2>}
@@ -49,7 +62,6 @@ function App() {
         </Container>
       )}
     </>
-    //</div>
   );
 }
 

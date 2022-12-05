@@ -3,7 +3,7 @@ import React from "react";
 import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  //pollingInterval: 5000,
+  pollingInterval: 5000,
   loading: "idle",
 };
 
@@ -25,12 +25,15 @@ const devicesSlice = createSlice({
         state.loading = "idle";
       }
     },
-    // updatePollingInterval(state, action) {
-    //   state.pollingInterval = action.payload;
-    // },
+    updatePollingInterval(state, action) {
+      state.pollingInterval = action.payload;
+    },
   },
 });
 
-export const { devicesLoading, devicesReceived } = devicesSlice.actions;
+export const { devicesLoading, devicesReceived, updatePollingInterval } =
+  devicesSlice.actions;
+
 export default devicesSlice.reducer;
-export const selectPollingInterval = (state) => state.pollingInterval;
+
+export const selectPollingInterval = (state) => state.devices.pollingInterval;

@@ -1,18 +1,10 @@
 //import { forceQueryFnSymbol } from "@reduxjs/toolkit/dist/query/core/buildInitiate";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { useDispatch } from "react-redux";
-import {
-  devicesLoading,
-  devicesReceived,
-  updatePollingInterval,
-} from "../../features/devices/devicesSlice"
-
-//const dispatch = useDispatch();
 
 export const apiSlice = createApi({
   reducerPath: "sensePlusApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://13.232.30.234:8082/api/",
+    baseUrl: "http://claricesystems.in:8082/api/",
     prepareHeaders: (headers, { getState }) => {
       headers.set(
         "authorization",
@@ -23,11 +15,12 @@ export const apiSlice = createApi({
   }),
   endpoints: (builder) => ({
     positions: builder.query({
-      query: () => "/positions",
+      query: (user) => "/positions",
     }),
     positionsAndDevices: builder.query({
       async queryFn(args, queryApi, extraOptions, fetchWithBQ) {
-        // First call the positions API
+        console.log(args);
+        // 1. Call the positions API to read temp and humidity etc.
         const positions = await fetchWithBQ("/positions");
         const positionsArr = [];
         positions.data?.map((pos) =>
@@ -39,9 +32,12 @@ export const apiSlice = createApi({
             humidity: pos.attributes.adc1,
           })
         );
+
+        // 2. Call the devices API for max and min threshold
         const devices = await fetchWithBQ(
           "http://claricesystems.in:8080/api/v1/devices?userId=1"
         );
+
         let mergedArr = [];
         // Merge the device array into positions array based on id
         for (let i = 0; i < positionsArr.length; i++) {

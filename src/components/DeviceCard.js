@@ -8,7 +8,7 @@ export function DeviceCard({ device }) {
   return (
     <Card className="h-100 shadow bg-white rounded m-2 p-2">
       <Card.Header className="fs-3 fw-semibold text-nowrap">
-        {device.name}
+        {device.name} - {device.id}
       </Card.Header>
       <Row>
         <Col xs={6}>
@@ -37,7 +37,10 @@ export function DeviceCard({ device }) {
           </Row>
           <Row>
             <div className="m-2 font-weight-bold text-center text-nowrap fs-4 fw-bold">
-              {device.humidity ? Number(device.humidity / 100).toFixed(2) : "-"}%
+              {device.humidity
+                ? Number(device.humidity * 0.033).toFixed(2)
+                : "-"}
+              %
             </div>
           </Row>
         </Col>
