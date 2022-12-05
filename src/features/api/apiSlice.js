@@ -1,10 +1,13 @@
 //import { forceQueryFnSymbol } from "@reduxjs/toolkit/dist/query/core/buildInitiate";
-import { createEntityAdapter } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { useDispatch } from "react-redux";
+import {
+  devicesLoading,
+  devicesReceived,
+  updatePollingInterval,
+} from "../../features/devices/devicesSlice"
 
-const devicesAdapter = createEntityAdapter({
-  sortComparer: (a, b) => b.id.localeCompare(a.id),
-});
+//const dispatch = useDispatch();
 
 export const apiSlice = createApi({
   reducerPath: "sensePlusApi",
@@ -39,7 +42,6 @@ export const apiSlice = createApi({
         const devices = await fetchWithBQ(
           "http://claricesystems.in:8080/api/v1/devices?userId=1"
         );
-        debugger;
         let mergedArr = [];
         // Merge the device array into positions array based on id
         for (let i = 0; i < positionsArr.length; i++) {
@@ -50,8 +52,9 @@ export const apiSlice = createApi({
             ),
           });
         }
-        debugger;
-        //devicesAdapter.upsertMany(queryApi.getState(), deviceArr);
+        console.log(queryApi.getState());
+        //devicesAdapter.setAll(queryApi.getState(), mergedArr);
+        //useDispatch(devicesReceived(mergedArr));
         return mergedArr ? { data: mergedArr } : { error: devices.error };
       },
     }),
