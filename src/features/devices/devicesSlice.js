@@ -26,6 +26,13 @@ const devicesSlice = createSlice({
       }
     },
     updatePollingInterval(state, action) {
+      console.log(
+        'interval changed from: "' +
+          state.pollingInterval +
+          '" to "' +
+          action.payload +
+          '"'
+      );
       state.pollingInterval = action.payload;
     },
   },

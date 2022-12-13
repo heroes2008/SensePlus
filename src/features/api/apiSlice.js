@@ -19,7 +19,7 @@ export const apiSlice = createApi({
     }),
     positionsAndDevices: builder.query({
       async queryFn(args, queryApi, extraOptions, fetchWithBQ) {
-        console.log(args);
+        //console.log(args);
         // 1. Call the positions API to read temp and humidity etc.
         const positions = await fetchWithBQ("/positions");
         const positionsArr = [];
@@ -48,7 +48,7 @@ export const apiSlice = createApi({
             ),
           });
         }
-        console.log(queryApi.getState());
+        console.log(mergedArr);
         //devicesAdapter.setAll(queryApi.getState(), mergedArr);
         //useDispatch(devicesReceived(mergedArr));
         return mergedArr ? { data: mergedArr } : { error: devices.error };

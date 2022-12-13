@@ -7,7 +7,15 @@ import { Row, Col } from "react-bootstrap";
 export function DeviceCard({ device }) {
   return (
     <Card className="h-100 shadow bg-white rounded m-2 p-2">
-      <Card.Header className="fs-3 fw-semibold text-nowrap">
+      <Card.Header
+        className="fs-3 fw-semibold"
+        style={ (device.min_threshold && device.max_threshold) &&
+          (device.temp >= device.min_threshold ||
+          device.temp <= device.max_threshold)
+            ? {}
+            : { backgroundColor: "red" }
+        }
+      >
         {device.name} - {device.id}
       </Card.Header>
       <Row>

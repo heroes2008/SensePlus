@@ -26,7 +26,7 @@ export const RefreshReadings = ({ refetch, isFetching }) => {
   //const [pollingInterval, setPollingInterval] = useState(5000);
 
   const onPollingIntervalChange = (e) => {
-    console.log("interval changed to:" + Number(e.target.value));
+    //console.log("interval changed to:" + Number(e.target.value));
     dispatch(updatePollingInterval(Number(e.target.value)));
     //setPollingInterval(Number(e.target.value));
   };
