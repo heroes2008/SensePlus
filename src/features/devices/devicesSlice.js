@@ -5,11 +5,13 @@ import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 const initialState = {
   pollingInterval: 5000,
   loading: "idle",
+  positionsAndDevicesData: [],
 };
 
-const devicesAdapter = createEntityAdapter({
-  sortComparer: (a, b) => a.id.localeCompare(b.id),
-});
+//const devicesAdapter = createEntityAdapter();
+//   {
+//   sortComparer: (a, b) => a.id.localeCompare(b.id),
+// }
 const devicesSlice = createSlice({
   name: "devices",
   initialState,
@@ -20,10 +22,13 @@ const devicesSlice = createSlice({
       }
     },
     devicesReceived(state, action) {
-      if (state.loading === "pending") {
-        devicesAdapter.setAll(state, action.payload);
-        state.loading = "idle";
-      }
+      //if (state.loading === "idle") {
+      //devicesAdapter.setAll(state, action.payload);
+      console.log("In devicesReceived...");
+      state.positionsAndDevicesData = [];
+      state.positionsAndDevicesData = action.payload;
+      //state.loading = "pending";
+      //}
     },
     updatePollingInterval(state, action) {
       console.log(

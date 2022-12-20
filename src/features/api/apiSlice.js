@@ -1,5 +1,7 @@
 //import { forceQueryFnSymbol } from "@reduxjs/toolkit/dist/query/core/buildInitiate";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import moment from "moment-timezone";
+import { devicesReceived } from "../devices/devicesSlice";
 
 export const apiSlice = createApi({
   reducerPath: "sensePlusApi",
@@ -49,12 +51,61 @@ export const apiSlice = createApi({
           });
         }
         console.log(mergedArr);
-        //devicesAdapter.setAll(queryApi.getState(), mergedArr);
-        //useDispatch(devicesReceived(mergedArr));
+        queryApi.dispatch(devicesReceived(mergedArr));
+
         return mergedArr ? { data: mergedArr } : { error: devices.error };
+      },
+    }),
+    routesAndDevices: builder.query({
+      async queryFn(args, queryApi, extraOptions, fetchWithBQ) {
+        // 1. Call the positions API to read temp and humidity etc.
+        const routes = await fetchWithBQ(
+          "http://claricesystems.in:8082/api/reports/route?type=allEvents&to=2022-12-15T07:02:16.000Z&deviceId=21&from=2022-12-15T06:59:09.000Z"
+        );
+        //debugger;
+        const routesArr = [];
+        routes.data?.map((route) =>
+          routesArr.push({
+            id: route.deviceId,
+            deviceTime: moment
+              .utc(route.deviceTime)
+              //.tz("Asia/Kolkata")
+              .format("YYYY/DD/MM HH:mm:ss"),
+            humidity: Number(Number(route.attributes.adc1 * 0.033).toFixed(2)),
+            temp: Number(route.attributes.temp1),
+          })
+        );
+        debugger;
+        // 2. Call the devices API for max and min threshold
+        const devices = await fetchWithBQ(
+          "http://claricesystems.in:8080/api/v1/devices?userId=1"
+        );
+
+        let mergedRoutesArr = [];
+        //debugger;
+        // Merge the device array into routes array based on id
+        for (let i = 0; i < routesArr.length; i++) {
+          mergedRoutesArr.push({
+            ...routesArr[i],
+            ...devices.data?.find(
+              (innerItem) => innerItem.id === routesArr[i].id
+            ),
+          });
+        }
+        //debugger;
+        console.log(mergedRoutesArr);
+        //queryApi.dispatch(devicesReceived(mergedRoutesArr));
+
+        return mergedRoutesArr
+          ? { data: mergedRoutesArr }
+          : { error: devices.error };
       },
     }),
   }),
 });
 
-export const { usePositionsQuery, usePositionsAndDevicesQuery } = apiSlice;
+export const {
+  usePositionsQuery,
+  usePositionsAndDevicesQuery,
+  useRoutesAndDevicesQuery,
+} = apiSlice;
