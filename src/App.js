@@ -8,15 +8,7 @@ import { RefreshReadings } from "./components/RefreshReadings";
 import { useSelector } from "react-redux";
 import { selectPollingInterval } from "./features/devices/devicesSlice";
 import { useDispatch } from "react-redux";
-import {
-  BrowserRouter,
-  Switch,
-  Route,
-  Routes,
-  Redirect,
-  Outlet,
-  Link,
-} from "react-router-dom";
+import { BrowserRouter, Route, Routes, Outlet, Link } from "react-router-dom";
 import { NavBarCollapsible } from "./components/NavBar";
 import { Dashboard } from "./components/Dashboard";
 import { NotFound } from "./components/NotFound";
@@ -25,10 +17,10 @@ import { Graphs } from "./components/Graphs";
 function App() {
   return (
     <>
-      <NavBarCollapsible />
       {/* <h1 className="m-5 text-center">SensePlus Devices List</h1> */}
       {/* {isFetching && <h2 className="m-5 text-center">...Fetching</h2>} */}
       <BrowserRouter>
+        <NavBarCollapsible />
         <Routes>
           <Route
             path="/"

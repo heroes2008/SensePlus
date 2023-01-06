@@ -1,6 +1,6 @@
 import React from "react";
 import logo from "../logo.svg";
-import { useRoutesAndDevicesQuery } from "../features/api/apiSlice";
+import { useDevicesQuery } from "../features/api/apiSlice";
 import { Container, Row, Col } from "react-bootstrap";
 import { LineGraph } from "../components/LineGraph";
 //import { RefreshReadings } from "../components/RefreshReadings";
@@ -9,9 +9,9 @@ import { LineGraph } from "../components/LineGraph";
 
 export const Graphs = () => {
   //const pollingInterval = useSelector((state) => selectPollingInterval(state));
-
   const { data, isSuccess, isLoading, isFetching, refetch, isError, error } =
-    useRoutesAndDevicesQuery();
+    useDevicesQuery();
+
   return (
     <>
       {isLoading && <h2 className="m-5 text-center">...Loading</h2>}
@@ -28,9 +28,11 @@ export const Graphs = () => {
           </Col>
         </Row> */}
           <Row>
-            <Col md={12} className="m-3">
-              <LineGraph data={data} />
-            </Col>
+            {data?.map((device) => (
+              <Col md={12} className="m-3" key={device.id}>
+                <LineGraph device={device} />
+              </Col>
+            ))}
           </Row>
         </Container>
       )}
