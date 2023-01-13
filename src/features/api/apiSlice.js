@@ -72,18 +72,26 @@ export const apiSlice = createApi({
     }),
     routes: builder.query({
       async queryFn(args, queryApi, extraOptions, fetchWithBQ) {
-      const startTime = moment().utc().subtract(15, "minutes").format();
-      const endTime = moment().utc().subtract(5, "minutes").format();
-      console.log(startTime + " - " + endTime);  
+        //debugger;
+        const startTime = args.startDate
+          ? moment(args.startDate).utc().format()
+          : moment().utc().subtract(35, "minutes").format();
+
+        const endTime = args.endDate
+          ? moment(args.endDate).utc().format()
+          : moment().utc().subtract(5, "minutes").format();
+
+        console.log(startTime + " - " + endTime);
         //const routeUrl = `https://www.claricesystems.in/api/reports/route?type=allEvents&deviceId=${args}&from=2022-12-22T17:20:15.000Z&to=2022-12-22T17:24:26.000Z`;
-        const routeUrl = `https://www.claricesystems.in/api/reports/route?type=allEvents&deviceId=${args}&from=${startTime}&to=${endTime}`;
+        //const routeUrl = `https://www.claricesystems.in/api/reports/route?type=allEvents&deviceId=${args}&from=${startTime}&to=${endTime}`;
+        const routeUrl = `http://claricesystems.in:8080/api/v1/positions?deviceId=${args.selectedDevice}&from=${startTime}&to=${endTime}`;
         // 1. Call the routes API to read temp and humidity etc.
         const routes = await fetchWithBQ(routeUrl);
         const routesArr = [];
         routes.data?.map((route) =>
           routesArr.push({
-            id: route.deviceId,
-            deviceTime: moment.utc(route.deviceTime).format("HH:mm:ss"),
+            id: route.deviceid,
+            deviceTime: moment.utc(route.devicetime).format("HH:mm:ss"),
             humidity: Number(Number(route.attributes.adc1 * 0.033).toFixed(2)),
             temp: Number(route.attributes.temp1).toFixed(2),
           })

@@ -13,6 +13,7 @@ import { NavBarCollapsible } from "./components/NavBar";
 import { Dashboard } from "./components/Dashboard";
 import { NotFound } from "./components/NotFound";
 import { Graphs } from "./components/Graphs";
+import { Reports } from "./components/Reports";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             }
           />
           <Route path="graphs" element={<Graphs />} />
+          <Route path="reports" element={<Reports />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

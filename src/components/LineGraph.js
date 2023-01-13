@@ -27,7 +27,7 @@ export const LineGraph = ({ device }) => {
 
   //console.log(deviceId);
   const { data, isSuccess, isLoading, isFetching, refetch, isError, error } =
-    useRoutesQuery(deviceId);
+    useRoutesQuery({"selectedDevice": deviceId});
 
   // const dateFormatter = (date) => {
   //   debugger;

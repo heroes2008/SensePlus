@@ -17,7 +17,7 @@ const intervalOptions = [
   { label: "10s", value: 10000 },
   { label: "1m", value: 60000 },
 ];
-export const RefreshReadings = ({ refetch, isFetching }) => {
+  export const RefreshReadings = ({ refetch, isFetching }) => {
   const dispatch = useDispatch();
 
   const initialPollingInterval = useSelector((state) =>
