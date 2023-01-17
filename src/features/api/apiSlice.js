@@ -72,7 +72,6 @@ export const apiSlice = createApi({
     }),
     routes: builder.query({
       async queryFn(args, queryApi, extraOptions, fetchWithBQ) {
-        //debugger;
         const startTime = args.startDate
           ? moment(args.startDate).utc().format()
           : moment().utc().subtract(35, "minutes").format();
@@ -91,7 +90,13 @@ export const apiSlice = createApi({
         routes.data?.map((route) =>
           routesArr.push({
             id: route.deviceid,
+            deviceName: args.selectedDeviceName,
             deviceTime: moment.utc(route.devicetime).format("HH:mm:ss"),
+            latitude: route.latitude,
+            longitude: route.longitude,
+            speed: route.speed,
+            event: route.attributes.event,
+            address: route.address,
             humidity: Number(Number(route.attributes.adc1 * 0.033).toFixed(2)),
             temp: Number(route.attributes.temp1).toFixed(2),
           })

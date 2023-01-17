@@ -12,31 +12,30 @@ import moment from "moment-timezone";
 import { apiSlice } from "../features/api/apiSlice";
 import { useLazyQuery } from "@reduxjs/toolkit/query/react";
 import DataTable from "react-data-table-component";
+import { CSVLink } from "react-csv";
+import { ReportPDFExport } from "./ReportPDFExport";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 
 export const ReportForm = ({ devices }) => {
   const dispatch = useDispatch();
   const [selectedDevice, setSelectedDevice] = useState();
-  const [startDate, setStartDate] = useState(
-    new Date()
-    //moment().utc().subtract(35, "minutes").format("MM-dd-yyyy HH:mm:ss")
-  );
-  const [endDate, setEndDate] = useState(
-    new Date()
-    //moment().utc().subtract(5, "minutes").format("MM-dd-yyyy HH:mm:ss")
-  );
+  const [selectedDeviceName, setSelectedDeviceName] = useState();
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const [trigger, result] = apiSlice.endpoints.routes.useLazyQuery();
-
-  //   const initialPollingInterval = useSelector((state) =>
-  //     selectPollingInterval(state)
-  //   );
-  //const [pollingInterval, setPollingInterval] = useState(5000);
+  let reportData = [];
 
   const onDeviceChange = (e) => {
     console.log("device changed to:" + e.target.value);
     setSelectedDevice(e.target.value);
-    //dispatch(updatePollingInterval(Number(e.target.value)));
-    //setPollingInterval(Number(e.target.value));
+    var value = devices.filter(function (item) {
+      return item.id == e.target.value;
+    });
+
+    console.log(value[0].name);
+    setSelectedDeviceName(value[0].name);
+    console.log("selectedDeviceName:" + selectedDeviceName);
   };
 
   const onStartDateChange = (value) => {
@@ -47,17 +46,76 @@ export const ReportForm = ({ devices }) => {
     console.log("EndDate changed to:" + moment(value).format());
     setEndDate(moment(value).format());
   };
-  const onGenerateClick = () => {
+  const onGenerateClick = (selectedDeviceName) => {
     console.log("startDate:" + startDate);
     console.log("endDate:" + endDate);
-    trigger({ selectedDevice, startDate, endDate });
-    console.log("result.data:" + result.data);
+    trigger({ selectedDevice, selectedDeviceName, startDate, endDate })
+      .unwrap()
+      .then((res) => {
+        reportData = [...res];
+        console.log("reportData");
+        console.log(reportData);
+      });
+    //(fulfilled) =>
+    //data.forEach((item) => {
+    //  item.DeviceName = selectedDeviceName;
+    //}
   };
 
+  // const onDownloadPDFClick = (data) => {
+  //   debugger;
+  //   ReactPDF.render(<ReportPDFExport data={data} />, "report.pdf");
+  // };
+  const customStyles = {
+    rows: {
+      style: {
+        minHeight: "72px", // override the row height
+      },
+    },
+    headCells: {
+      style: {
+        // paddingLeft: "8px", // override the cell padding for head cells
+        // paddingRight: "8px",
+        fontWeight: "bold",
+        fontSize: "16",
+      },
+    },
+    cells: {
+      style: {
+        // paddingLeft: "8px", // override the cell padding for data cells
+        // paddingRight: "8px",
+        //fontWeight: "bold",
+      },
+    },
+  };
   const columns = [
     {
-      name: "Device ID",
-      selector: (row) => row.id,
+      name: "Device Name",
+      selector: (row) => row.deviceName,
+    },
+    {
+      name: "Date/Hour",
+      selector: (row) => row.deviceTime,
+    },
+    {
+      name: "Latitude",
+      selector: (row) => row.latitude,
+    },
+    {
+      name: "Longitude",
+      selector: (row) => row.longitude,
+    },
+    {
+      name: "Speed",
+      selector: (row) => row.speed,
+    },
+    {
+      name: "Event",
+      selector: (row) => row.event,
+    },
+    {
+      name: "Address",
+      selector: (row) => row.address,
     },
     {
       name: "Humidity",
@@ -67,6 +125,18 @@ export const ReportForm = ({ devices }) => {
       name: "Temperature",
       selector: (row) => row.temp,
     },
+  ];
+
+  const headers = [
+    { label: "Device Name", key: "deviceName" },
+    { label: "Date/Hour", key: "deviceTime" },
+    { label: "Latitude", key: "latitude" },
+    { label: "Longitude", key: "longitude" },
+    { label: "Speed", key: "speed" },
+    { label: "Event", key: "event" },
+    { label: "Address", key: "address" },
+    { label: "Humidity", key: "humidity" },
+    { label: "Temperature", key: "temp" },
   ];
 
   return (
@@ -93,8 +163,11 @@ export const ReportForm = ({ devices }) => {
           </div>
           <div>
             <DateTimePicker
+              disableClock={true}
               onChange={onStartDateChange}
-              value={startDate}
+              value={
+                typeof startDate === "string" ? new Date(startDate) : startDate
+              }
               //format={"yyyy-MM-dd HH:mm:ss"}
             ></DateTimePicker>
           </div>
@@ -105,33 +178,79 @@ export const ReportForm = ({ devices }) => {
           </div>
           <div>
             <DateTimePicker
+              disableClock={true}
               onChange={onEndDateChange}
-              value={endDate}
+              value={typeof endDate === "string" ? new Date(endDate) : endDate}
               //format={"yyyy-MM-dd HH:mm:ss"}
             ></DateTimePicker>
           </div>
-
-          {/* <Col sm={4}>
-          <Form.Control
-            as="button"
-            className="btn btn-success"
-            onClick={refetch}
-            disabled={isFetching}
-          >
-            {isFetching ? "Loading..." : "Manually Refresh"}
-          </Form.Control>
-        </Col> */}
         </Form.Group>
-        <Button className="m-3" variant="primary" onClick={onGenerateClick}>
-          Generate
+        <Button
+          className="m-3"
+          variant="primary"
+          onClick={() => onGenerateClick(selectedDeviceName)}
+        >
+          Generate Report
         </Button>
       </Form>
+      {/* <div>
+        <p>Selected device: {selectedDeviceName}</p>
+      </div> */}
+      {/* <div>
+        {result.isSuccess && (
+          <Button className="m-3 btn btn-success">Excel</Button>
+        )}
+      </div> */}
+      <div>
+        {result.isSuccess && (
+          <span>
+            <CSVLink
+              data={result.data}
+              headers={headers}
+              filename={"SensePlusReport.csv"}
+              className="btn btn-success"
+            >
+              Download Excel
+            </CSVLink>
+            {/* <ReportPDFExport data={result.data}></ReportPDFExport> */}
+            {result.isSuccess && (
+              <Button className="m-3 btn btn-success">
+                <PDFDownloadLink
+                  document={<ReportPDFExport data={result.data} />}
+                  fileName="RouteReport.pdf"
+                  style={{ color: "white", textAlign: "center"}}
+                >
+                  {({ blob, url, loading, error }) =>
+                    loading ? "Loading document..." : "Download PDF"
+                  }
+                </PDFDownloadLink>
+                {/* <PDFViewer
+                  children={<ReportPDFExport data={result.data} />}
+                  showToolbar={true}
+                ></PDFViewer>
+                View PDF  */}
+              </Button>
+            )}
+          </span>
+        )}
+      </div>
       <div
         className="m-3"
         style={{ borderStyle: "solid", borderWidth: "0.25px" }}
       >
         {result.isLoading && <h2 className="m-5 text-center">...Loading</h2>}
-        {result.isSuccess && <DataTable columns={columns} data={result.data} />}
+        {/* {result.isSuccess && result.data.forEach((item) => {
+          item.DeviceName = {selectedDeviceName}
+        })} */}
+        {result.isSuccess && (
+          <DataTable
+            title="Report"
+            columns={columns}
+            data={result.data}
+            pagination
+            // actions={actionsMemo}
+          />
+        )}
       </div>
     </>
   );
