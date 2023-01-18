@@ -61,40 +61,17 @@ export const ReportForm = ({ devices }) => {
     //  item.DeviceName = selectedDeviceName;
     //}
   };
-
-  // const onDownloadPDFClick = (data) => {
-  //   debugger;
-  //   ReactPDF.render(<ReportPDFExport data={data} />, "report.pdf");
-  // };
-  const customStyles = {
-    rows: {
-      style: {
-        minHeight: "72px", // override the row height
-      },
-    },
-    headCells: {
-      style: {
-        // paddingLeft: "8px", // override the cell padding for head cells
-        // paddingRight: "8px",
-        fontWeight: "bold",
-        fontSize: "16",
-      },
-    },
-    cells: {
-      style: {
-        // paddingLeft: "8px", // override the cell padding for data cells
-        // paddingRight: "8px",
-        //fontWeight: "bold",
-      },
-    },
-  };
   const columns = [
     {
       name: "Device Name",
       selector: (row) => row.deviceName,
     },
     {
-      name: "Date/Hour",
+      name: "Date",
+      selector: (row) => row.deviceDate,
+    },
+    {
+      name: "Time",
       selector: (row) => row.deviceTime,
     },
     {
@@ -129,7 +106,8 @@ export const ReportForm = ({ devices }) => {
 
   const headers = [
     { label: "Device Name", key: "deviceName" },
-    { label: "Date/Hour", key: "deviceTime" },
+    { label: "Date", key: "deviceDate" },
+    { label: "Time", key: "deviceTime" },
     { label: "Latitude", key: "latitude" },
     { label: "Longitude", key: "longitude" },
     { label: "Speed", key: "speed" },
@@ -193,65 +171,60 @@ export const ReportForm = ({ devices }) => {
           Generate Report
         </Button>
       </Form>
-      {/* <div>
-        <p>Selected device: {selectedDeviceName}</p>
-      </div> */}
-      {/* <div>
-        {result.isSuccess && (
-          <Button className="m-3 btn btn-success">Excel</Button>
-        )}
-      </div> */}
+
       <div>
         {result.isSuccess && (
-          <span>
+          <span className="m-3 float-end">
             <CSVLink
               data={result.data}
               headers={headers}
               filename={"SensePlusReport.csv"}
-              className="btn btn-success"
+              className="m-3 btn btn-success"
             >
               Download Excel
             </CSVLink>
-            {/* <ReportPDFExport data={result.data}></ReportPDFExport> */}
+
             {result.isSuccess && (
-              <Button className="m-3 btn btn-success">
-                <PDFDownloadLink
-                  document={<ReportPDFExport data={result.data} />}
-                  fileName="RouteReport.pdf"
-                  style={{ color: "white", textAlign: "center"}}
-                >
-                  {({ blob, url, loading, error }) =>
-                    loading ? "Loading document..." : "Download PDF"
-                  }
-                </PDFDownloadLink>
-                {/* <PDFViewer
-                  children={<ReportPDFExport data={result.data} />}
-                  showToolbar={true}
-                ></PDFViewer>
-                View PDF  */}
-              </Button>
+              <PDFDownloadLink
+                document={
+                  <ReportPDFExport
+                    data={result.data}
+                    startDate={moment(startDate).format()}
+                    endDate={moment(endDate).format()}
+                  />
+                }
+                fileName="RouteReport.pdf"
+                style={{ color: "white", textAlign: "center" }}
+                className="m-3 btn btn-success"
+              >
+                {({ blob, url, loading, error }) =>
+                  loading ? "Loading..." : "Download PDF"
+                }
+              </PDFDownloadLink>
             )}
           </span>
         )}
       </div>
-      <div
-        className="m-3"
-        style={{ borderStyle: "solid", borderWidth: "0.25px" }}
-      >
-        {result.isLoading && <h2 className="m-5 text-center">...Loading</h2>}
-        {/* {result.isSuccess && result.data.forEach((item) => {
+      {(result.isLoading || result.isSuccess) && (
+        <div
+          className="m-3"
+          style={{ borderStyle: "solid", borderWidth: "0.25px" }}
+        >
+          {result.isLoading && <h2 className="m-5 text-center">...Loading</h2>}
+          {/* {result.isSuccess && result.data.forEach((item) => {
           item.DeviceName = {selectedDeviceName}
         })} */}
-        {result.isSuccess && (
-          <DataTable
-            title="Report"
-            columns={columns}
-            data={result.data}
-            pagination
-            // actions={actionsMemo}
-          />
-        )}
-      </div>
+          {result.isSuccess && (
+            <DataTable
+              title="Report"
+              columns={columns}
+              data={result.data}
+              pagination
+              // actions={actionsMemo}
+            />
+          )}
+        </div>
+      )}
     </>
   );
 };

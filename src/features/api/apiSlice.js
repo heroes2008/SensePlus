@@ -91,6 +91,7 @@ export const apiSlice = createApi({
           routesArr.push({
             id: route.deviceid,
             deviceName: args.selectedDeviceName,
+            deviceDate: moment.utc(route.devicetime).format("DD/MM/YYYY"),
             deviceTime: moment.utc(route.devicetime).format("HH:mm:ss"),
             latitude: route.latitude,
             longitude: route.longitude,
