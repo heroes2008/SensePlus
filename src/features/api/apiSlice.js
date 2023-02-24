@@ -95,7 +95,7 @@ export const apiSlice = createApi({
             deviceTime: moment.utc(route.devicetime).format("HH:mm:ss"),
             latitude: route.latitude,
             longitude: route.longitude,
-            speed: route.speed,
+            speed: route.speed.toFixed(2),
             event: route.attributes.event,
             address: route.address,
             humidity: Number(Number(route.attributes.adc1 * 0.033).toFixed(2)),

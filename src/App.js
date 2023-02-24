@@ -14,8 +14,16 @@ import { Dashboard } from "./components/Dashboard";
 import { NotFound } from "./components/NotFound";
 import { Graphs } from "./components/Graphs";
 import { Reports } from "./components/Reports";
+import { Login } from "./components/Login/Login";
+import useToken from "./components/Login/useToken";
 
 function App() {
+  const { token, setToken } = useToken();
+
+  if (!token) {
+    return <Login setToken={setToken} />;
+  }
+
   return (
     <>
       {/* <h1 className="m-5 text-center">SensePlus Devices List</h1> */}
