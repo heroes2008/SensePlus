@@ -16,6 +16,8 @@ import { Graphs } from "./components/Graphs";
 import { Reports } from "./components/Reports";
 import { Login } from "./components/Login/Login";
 import useToken from "./components/Login/useToken";
+import { Logout } from "./components/logout";
+import { Profile } from "./components/Profile";
 
 function App() {
   const { token, setToken } = useToken();
@@ -23,6 +25,7 @@ function App() {
   if (!token) {
     return <Login setToken={setToken} />;
   }
+  console.log("App->token:" + token);
 
   return (
     <>
@@ -53,6 +56,11 @@ function App() {
           />
           <Route path="graphs" element={<Graphs />} />
           <Route path="reports" element={<Reports />} />
+          {/* <Route path="profile" element={<Profile />} /> */}
+          <Route path="login" element={<Login setToken={setToken} />} />
+          <Route path="logout" element={<Logout setToken={setToken} />} />
+          <Route path="navbar" element={<NavBarCollapsible />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

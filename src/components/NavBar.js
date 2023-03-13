@@ -1,14 +1,38 @@
+import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { Outlet, Link, NavLink } from "react-router-dom";
 import logo from "../assets/logo.png";
+import "../../src/styles.css";
+import { Login } from "../components/Login/Login";
+import useToken from "../components/Login/useToken";
 
 export const NavBarCollapsible = () => {
-  let activeStyle = {
-    textDecoration: "underline",
-  };
+  // const userid = localStorage.getItem("userid");
+
+  // const [display, setDisplay] = useState("notdisplayed");
+
+  // const showButton = (e) => {
+  //   e.preventDefault();
+  //   setDisplay("displayed");
+  // };
+
+  // const hideButton = (e) => {
+  //   e.preventDefault();
+  //   setDisplay("notdisplayed");
+  // };
+
+  // let activeStyle = {
+  //   textDecoration: "underline",
+  // };
+  const { token, setToken } = useToken();
+  console.log("Navbar->token:" + token);
+  if (!token) {
+    return <Login setToken={setToken} />;
+  }
+
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" sticky="top">
       <Container>
@@ -60,25 +84,18 @@ export const NavBarCollapsible = () => {
                 </li>
               </ul>
             </Nav>
-            {/* <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown> */}
           </Nav>
           <Nav>
-            {/* <Nav.Link className="btn btn-primary text-black"> */}{" "}
-            <NavLink className="btn btn-primary" to="/Login">
-              Login
-            </NavLink>
-            {/* </Nav.Link> */}
+            <NavDropdown title="Settings" id="collasible-nav-dropdown">
+              <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
+              <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
+            </NavDropdown>
           </Nav>
+          {/* <Nav>
+              <NavLink className="btn btn-primary" to="/Login">
+                Logout
+              </NavLink>
+            </Nav> */}
           <Outlet></Outlet>
         </Navbar.Collapse>
       </Container>

@@ -6,11 +6,19 @@ import { LineGraph } from "../components/LineGraph";
 //import { RefreshReadings } from "../components/RefreshReadings";
 // import { useSelector } from "react-redux";
 // import { selectPollingInterval } from "../features/devices/devicesSlice";
+import { Login } from "../components/Login/Login";
+import useToken from "../components/Login/useToken";
 
 export const Graphs = () => {
   //const pollingInterval = useSelector((state) => selectPollingInterval(state));
   const { data, isSuccess, isLoading, isFetching, refetch, isError, error } =
     useDevicesQuery();
+
+  const { token, setToken } = useToken();
+  console.log("Graphs->token:" + token);
+  if (!token) {
+    return <Login setToken={setToken} />;
+  }
 
   return (
     <>

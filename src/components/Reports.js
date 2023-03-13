@@ -3,6 +3,8 @@ import { useDevicesQuery } from "../features/api/apiSlice";
 import { Container, Row, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { ReportForm } from "./ReportForm";
+import { Login } from "../components/Login/Login";
+import useToken from "../components/Login/useToken";
 
 export const Reports = () => {
   const {
@@ -14,6 +16,12 @@ export const Reports = () => {
     isError,
     error,
   } = useDevicesQuery();
+
+  const { token, setToken } = useToken();
+  console.log("Reports->token:" + token);
+  if (!token) {
+    return <Login setToken={setToken} />;
+  }
 
   return (
     <>

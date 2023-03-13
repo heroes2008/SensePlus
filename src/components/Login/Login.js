@@ -3,60 +3,57 @@ import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import PropTypes from "prop-types";
 import "./Login.css";
 import logo from "../../assets/logo.png";
+//import { useLoginMutation } from "../../features/api/apiSlice";
 
-async function loginUser(credentials) {
-  debugger;
-  let creds = JSON.stringify(credentials);
+async function login(credentials) {
+  var formBody = [];
+  for (var key in credentials) {
+    var encodedKey = encodeURIComponent(key);
+    var encodedValue = encodeURIComponent(credentials[key]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+  //debugger;
+  //let creds = JSON.stringify(credentials);
   return fetch("http://claricesystems.in:8082/api/session", {
     method: "POST",
     headers: {
-      authorization: "Basic Z2FqYW5hbmQuYkBzYWthdGEuaW46Z2JAc2FrYXRh",
-      //"Content-Type": "application/x-www-form-urlencoded",
-      "Content-Type": "application/json; charset=utf-8",
-      Accept: "application/json, application/xml, text/plain, text/html, *.*",
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
     },
-    body: creds,
+    body: formBody,
   }).then((data) => data.json());
-  // const token = {
-  //   token: "test123",
-  // };
-  // return token;
 }
 
-export const Login = ({ setToken }) => {
-  const [username, setUserName] = useState();
+export function Login({ setToken }) {
+  const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
+  //const [login, { isLoading }] = useLoginMutation();
   const handleSubmit = async (e) => {
+    console.log("email:" + email);
+    console.log("password:" + password);
     e.preventDefault();
-    const token = await loginUser({
-      email: username,
-      password: password,
-    });
-    debugger;
-    //setToken(token);
+    let token = null;
+    try {
+      // const token = await login({
+      //   email: email,
+      //   password: password,
+      // }).unwrap();
+      token = await login({
+        email,
+        password,
+      });
+    } catch (err) {
+      //debugger;
+      console.error("Error with login: ", err);
+    }
+    //debugger;
+    console.log(token);
+    if (token)
+      setToken({ email, password, userid: token.id, username: token.name });
   };
 
   return (
-    // <div className="login-wrapper">
-    //   <h1>Please Log In</h1>
-    //   <form onSubmit={handleSubmit}>
-    //     <label>
-    //       <p>Username</p>
-    //       <input type="text" onChange={(e) => setUserName(e.target.value)} />
-    //     </label>
-    //     <label>
-    //       <p>Password</p>
-    //       <input
-    //         type="password"
-    //         onChange={(e) => setPassword(e.target.value)}
-    //       />
-    //     </label>
-    //     <div>
-    //       <button type="submit">Submit</button>
-    //     </div>
-    //   </form>
-    // </div>
     <>
       <div className="App">
         <div className="container">
@@ -82,7 +79,7 @@ export const Login = ({ setToken }) => {
                   <div>
                     <input
                       type="text"
-                      onChange={(e) => setUserName(e.target.value)}
+                      onChange={(e) => setEmail(e.target.value)}
                     />{" "}
                   </div>
                   <div>
@@ -107,8 +104,8 @@ export const Login = ({ setToken }) => {
       </div>
     </>
   );
-};
+}
 
-// Login.propTypes = {
-//   setToken: PropTypes.func.isRequired,
-// };
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired,
+};

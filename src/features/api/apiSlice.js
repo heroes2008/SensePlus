@@ -3,6 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import moment from "moment-timezone";
 import devicesSlice, { devicesReceived } from "../devices/devicesSlice";
 
+const userid = localStorage.getItem("userid");
+console.log("apiSlice->userid:" + userid);
 export const apiSlice = createApi({
   reducerPath: "sensePlusApi",
   baseQuery: fetchBaseQuery({
@@ -13,11 +15,27 @@ export const apiSlice = createApi({
         "Basic YWRtaW5AY2xhcmljZXN5c3RlbXMuaW46QWJjQDEyMw=="
       );
       headers.set("Accept", "application/json");
+      // headers.set(
+      //   "Content-Type",
+      //   "application/x-www-form-urlencoded; charset=utf-8"
+      // );
+      //headers.set("Content-Type", "application/json; charset=utf-8");
     },
   }),
   endpoints: (builder) => ({
     positions: builder.query({
       query: (user) => "/positions",
+    }),
+    login: builder.mutation({
+      query: (credential) => ({
+        url: "/session",
+        method: "POST",
+        //body: JSON.stringify(credential),
+        body: JSON.stringify({
+          email: "gajanand.b@sakata.in",
+          password: "gb@sakata",
+        }),
+      }),
     }),
     positionsAndDevices: builder.query({
       async queryFn(args, queryApi, extraOptions, fetchWithBQ) {
@@ -37,7 +55,9 @@ export const apiSlice = createApi({
 
         // 2. Call the devices API for max and min threshold
         const devices = await fetchWithBQ(
-          "http://claricesystems.in:8080/api/v1/devices?userId=1"
+          `http://claricesystems.in:8080/api/v1/devices?userId=${localStorage.getItem(
+            "userid"
+          )}`
         );
 
         let mergedArr = [];
@@ -60,7 +80,9 @@ export const apiSlice = createApi({
       async queryFn(args, queryApi, extraOptions, fetchWithBQ) {
         // 2. Call the devices API for max and min threshold
         const devices = await fetchWithBQ(
-          "http://claricesystems.in:8080/api/v1/devices?userId=1"
+          `http://claricesystems.in:8080/api/v1/devices?userId=${localStorage.getItem(
+            "userid"
+          )}`
         );
 
         console.log("devices");
@@ -137,4 +159,5 @@ export const {
   usePositionsAndDevicesQuery,
   useDevicesQuery,
   useRoutesQuery,
+  useLoginMutation,
 } = apiSlice;
